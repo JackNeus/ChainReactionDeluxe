@@ -20,11 +20,11 @@ public class CRGraphics extends JPanel {
 
         int rows = board.getRows(), cols = board.getCols();
         Dimension d = getSize();
-        cellSize = (int)Math.min(d.getWidth() / (cols + 2), d.getHeight() / (rows + 2));
-    
-        x0 = cellSize;
+        cellSize = (int)Math.min(d.getWidth() / cols, d.getHeight() / rows);
+
+        x0 = (int)(d.getWidth() - cols * cellSize) / 2;
         x1 = x0 + cols * cellSize;
-        y0 = cellSize;
+        y0 = (int)  (d.getWidth() - rows * cellSize) / 2;
         y1 = y0 + rows * cellSize;
 
         drawGrid(g);
@@ -32,7 +32,7 @@ public class CRGraphics extends JPanel {
         for (int r = 0; r < board.getRows(); r++) {
             for (int c = 0; c < board.getCols(); c++) {
                 Entity entity = board.getCell(r, c);
-                entity.render(g, cellSize, (r + 1) * cellSize, (c + 1) * cellSize);
+                entity.render(g, cellSize, y0 + r * cellSize, x0 + c * cellSize);
             }
         }
     }
@@ -42,8 +42,8 @@ public class CRGraphics extends JPanel {
     }
 
     public CellCoords getCellIn(int x, int y) {
-        int r = y / cellSize - 1;
-        int c = x / cellSize - 1;
+        int r = (y - y0) / cellSize;
+        int c = (x - x0) / cellSize;
         CellCoords coords = new CellCoords(r, c);
         return coords;
     }
@@ -55,5 +55,9 @@ public class CRGraphics extends JPanel {
         for (int c = 0; c < board.getCols() + 1; c++) {
             g.drawLine(x0 + c * cellSize, y0, x0 + c * cellSize, y1);
         }
+    }
+
+    public void animateExplosion(Explosion e) {
+
     }
 }

@@ -5,12 +5,15 @@ public class Board {
     private static int[] dx = new int[]{0, 0, -1, 1};
     private static int[] dy = new int[]{1, -1, 0, 0};
 
+    private Game context;
+
     private int rows;
     private int cols;
 
     private Entity[][] board;
 
-    public Board(int rows, int cols) {
+    public Board(Game context, int rows, int cols) {
+        this.context = context;
         this.rows = rows;
         this.cols = cols;
 
@@ -73,7 +76,9 @@ public class Board {
         boolean changeMade;
         do {
             changeMade = false;
-            
+
+            Explosion e = new Explosion();
+
             for (int r = 0; r < rows; r++) {
                 for (int c = 0; c < cols; c++) {
                     if (board[r][c].shouldExplode()) {
@@ -89,27 +94,17 @@ public class Board {
 
                                 board[nr][nc].setPlayer(playerId);
                                 board[nr][nc].addBlob();
+
+                                e.addExplosion(new CellCoords(r, c), new CellCoords(nr, nc));
                             }
                         }
                     }
                 }
             }
+            context.explosionOccured(e);
         } while (changeMade);
     }
 
-    /*
-    public Iterable<Entity> getNeighbors(int r, int c) {
-        LinkedList<Entity> neighbors = new LinkedList<Entity>();
-        for (int d = 0; d < dx.length; d++) {
-            int nx = r + dx[d], ny = c + dy[d];
-            if (isValidCell(nx, ny)) {
-                if (board[nx][ny] == null) continue;
-                neighbors.add(board[nx][ny]);
-            }
-        }
-        return neighbors;
-    }
-    */
     public boolean isValidCell(int row, int col) {
         if (row < 0 || col < 0 || row >= rows || col >= cols) return false;
         return true;
