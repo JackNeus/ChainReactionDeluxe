@@ -5,24 +5,26 @@ public class PlayerBlob extends Entity {
     private int max_size;
 
     public PlayerBlob(int max_size) {
+        super();
         this.size = 0;
         this.max_size = max_size;
+    }
+
+    public int size() {
+        return size;
     }
 
     public void addBlob() {
         size++;
     }
 
-    public int getSize() {
-        return size;
+    public void explode() {
+        setPlayer(-1);
+        size = 0;
     }
 
     public boolean shouldExplode() {
         return size == max_size;
-    }
-
-    public void explode() {
-        size = 0;
     }
 
     public void render(Graphics g, int cellSize, int r, int c) {

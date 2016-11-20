@@ -16,12 +16,6 @@ public class Application {
     public Application() {
         game = new Game(2);
         board = new Board(10, 8);
-        board.makeMove(0, 0, 0);
-        board.makeMove(0, 1, 2);
-        board.makeMove(0, 1, 2);
-        board.makeMove(0, 1, 2);
-        board.makeMove(0, 3, 1);
-        board.makeMove(0, 3, 1);
         prepareGUI();
         initEventListener();
         startGUI();
@@ -41,15 +35,15 @@ public class Application {
 
     private void initEventListener() {
         graphics.addMouseListener(new MouseAdapter() {
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 int x = e.getX();
                 int y = e.getY();
-                System.out.println(x + " " + y);
                 CellCoords coords = graphics.getCellIn(x, y);
                 if (!board.isValidCell(coords.row, coords.col)) return;
 
                 board.makeMove(0, coords.row, coords.col);
                 graphics.refresh();
+
             }
         });
     }

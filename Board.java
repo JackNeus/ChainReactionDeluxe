@@ -8,16 +8,16 @@ public class Board {
     private int rows;
     private int cols;
 
-    private Cell[][] board;
+    private Entity[][] board;
 
     public Board(int rows, int cols) {
         this.rows = rows;
         this.cols = cols;
 
-        board = new Cell[rows][cols]; // Initialize board with all empty cells
+        board = new Entity[rows][cols]; // Initialize board with all empty cells
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                board[r][c] = new Cell(this, r, c, capacity(r, c));
+                board[r][c] = new PlayerBlob(capacity(r, c));
             }
         }
     }
@@ -26,7 +26,7 @@ public class Board {
         this.rows = b.getRows();
         this.cols = b.getCols();
 
-        board = new Cell[rows][cols];
+        board = new Entity[rows][cols];
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
                 board[r][c] = b.getCell(r, c);
@@ -42,7 +42,7 @@ public class Board {
         return cols;
     }
 
-    public Cell getCell(int r, int c) {
+    public Entity getCell(int r, int c) {
         if (!isValidCell(r, c)) return null;
         return board[r][c];
     }
@@ -50,20 +50,56 @@ public class Board {
     public boolean makeMove(int player, int row, int col) {
         if (!isValidCell(row, col)) return false;
         
-        Cell site = board[row][col];
+        Entity site = board[row][col];
 
         // A different player has this square claimed already
-        if (site.isOccupied() && site.getPlayer() != player) return false; 
+        //if (site.isOccupied() && site.getPlayer() != player) return false; 
         
-        if (!site.isOccupied()) {
-            site.initializePlayerBlob(player);
+        if (!(site instanceof PlayerBlob)) return false; // Can't place here
+
+        PlayerBlob blob = (PlayerBlob) site;
+
+        if (blob.size() == 0) {
+            blob.setPlayer(player);
         }
-        site.addBlob(); 
+
+        blob.addBlob(); 
+        if (blob.shouldExplode()) explode();
+
         return true;
     }
 
-    public Iterable<Cell> getNeighbors(int r, int c) {
-        LinkedList<Cell> neighbors = new LinkedList<Cell>();
+    public void explode() {
+        boolean changeMade;
+        do {
+            changeMade = false;
+            
+            for (int r = 0; r < rows; r++) {
+                for (int c = 0; c < cols; c++) {
+                    if (board[r][c].shouldExplode()) {
+                        int playerId = board[r][c].getPlayer();
+                        board[r][c].explode();
+
+                        changeMade = true;
+
+                        NeighborRules rules = board[r][c].getNeighborRules();
+                        for(int d = 0; d < rules.dx.length; d++) {
+                            int nr = r + rules.dy[d], nc = c + rules.dx[d];
+                            if (isValidCell(nr, nc)) {
+
+                                board[nr][nc].setPlayer(playerId);
+                                board[nr][nc].addBlob();
+                            }
+                        }
+                    }
+                }
+            }
+        } while (changeMade);
+    }
+
+    /*
+    public Iterable<Entity> getNeighbors(int r, int c) {
+        LinkedList<Entity> neighbors = new LinkedList<Entity>();
         for (int d = 0; d < dx.length; d++) {
             int nx = r + dx[d], ny = c + dy[d];
             if (isValidCell(nx, ny)) {
@@ -73,7 +109,7 @@ public class Board {
         }
         return neighbors;
     }
-
+    */
     public boolean isValidCell(int row, int col) {
         if (row < 0 || col < 0 || row >= rows || col >= cols) return false;
         return true;
@@ -92,7 +128,7 @@ public class Board {
     public void printBoard() {
         for (int i = 0; i < rows; i++) {
             for (int j = 0; j < cols; j++) {
-                System.out.print(board[i][j].getSize());
+                System.out.print(((PlayerBlob)board[i][j]).size());
             }
             System.out.println("");
         }

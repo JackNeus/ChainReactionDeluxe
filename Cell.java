@@ -48,13 +48,6 @@ public class Cell {
 
     public void addBlob() {
         contents.addBlob();
-        if (contents.shouldExplode()) {
-            contents.explode();
-            Iterable<Cell> neighbors = context.getNeighbors(row, col);
-            for (Cell neighbor : neighbors) {
-                neighbor.addBlob(player);
-            }
-        }
     }
 
     public void addBlob(int fromPlayer) { // For use in chain reactions when a cell hasn't yet been initialized

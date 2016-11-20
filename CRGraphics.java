@@ -31,8 +31,8 @@ public class CRGraphics extends JPanel {
 
         for (int r = 0; r < board.getRows(); r++) {
             for (int c = 0; c < board.getCols(); c++) {
-                Cell cell = board.getCell(r, c);
-                cell.render(g, cellSize);
+                Entity entity = board.getCell(r, c);
+                entity.render(g, cellSize, (r + 1) * cellSize, (c + 1) * cellSize);
             }
         }
     }
