@@ -1,3 +1,4 @@
+import java.awt.*;
 
 public class Cell {
     private Board context; // Board that this cell is in
@@ -61,6 +62,11 @@ public class Cell {
             initializePlayerBlob(fromPlayer);
         }
         addBlob();
+    }
+
+    public void render(Graphics g, int cellSize) {
+        if (contents == null) return;
+        contents.render(g, cellSize, (row + 1) * cellSize, (col + 1) * cellSize);
     }
 
     public static void main(String[] args) {

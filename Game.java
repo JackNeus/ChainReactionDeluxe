@@ -32,6 +32,11 @@ public class Game {
         }
     }
 
+    public Board getBoard() {
+        Board b = new Board(board);
+        return b;
+    }
+
     public static void main(String[] args) {
         Game game = new Game(2);
         game.playGame();

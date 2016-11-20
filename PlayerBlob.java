@@ -1,3 +1,4 @@
+import java.awt.*;
 
 public class PlayerBlob extends Entity {
     private int size;
@@ -22,5 +23,26 @@ public class PlayerBlob extends Entity {
 
     public void explode() {
         size = 0;
+    }
+
+    public void render(Graphics g, int cellSize, int r, int c) {
+        if (size == 1) {
+            int margin = cellSize / 8;
+            int adjCellSize = cellSize - 2 * margin;
+            g.fillOval(c + margin, r + margin, adjCellSize, adjCellSize);
+        }
+        if (size == 2) {
+            int margin = cellSize / 10;
+            int adjCellSize = (cellSize - 2 * margin) / 2;
+            g.fillOval(c + margin, r + margin, adjCellSize, adjCellSize);
+            g.fillOval(c + (cellSize / 2), r + (cellSize / 2), adjCellSize, adjCellSize);
+        }
+        if (size == 3) {
+            int margin = cellSize / 10;
+            int adjCellSize = (cellSize - 2 * margin) / 2;
+            g.fillOval(c + (cellSize / 2 - adjCellSize / 2), r + margin, adjCellSize, adjCellSize);
+            g.fillOval(c + margin, r + margin * 6, adjCellSize, adjCellSize);
+            g.fillOval(c + margin * 6, r + margin * 6, adjCellSize, adjCellSize);
+        }
     }
 }

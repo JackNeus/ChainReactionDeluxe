@@ -22,7 +22,34 @@ public class Board {
         }
     }
 
+    public Board(Board b) { // Constructor w deep copy
+        this.rows = b.getRows();
+        this.cols = b.getCols();
+
+        board = new Cell[rows][cols];
+        for (int r = 0; r < rows; r++) {
+            for (int c = 0; c < cols; c++) {
+                board[r][c] = b.getCell(r, c);
+            }
+        }
+    }
+
+    public int getRows() {
+        return rows;
+    }
+
+    public int getCols() {
+        return cols;
+    }
+
+    public Cell getCell(int r, int c) {
+        if (!isValidCell(r, c)) return null;
+        return board[r][c];
+    }
+
     public boolean makeMove(int player, int row, int col) {
+        if (!isValidCell(row, col)) return false;
+        
         Cell site = board[row][col];
 
         // A different player has this square claimed already
@@ -40,15 +67,15 @@ public class Board {
         for (int d = 0; d < dx.length; d++) {
             int nx = r + dx[d], ny = c + dy[d];
             if (isValidCell(nx, ny)) {
+                if (board[nx][ny] == null) continue;
                 neighbors.add(board[nx][ny]);
             }
         }
         return neighbors;
     }
 
-    private boolean isValidCell(int row, int col) {
-        if (row < 0 || col < 0 || row > rows || col > cols) return false;
-        if (board[row][col] == null) return false;
+    public boolean isValidCell(int row, int col) {
+        if (row < 0 || col < 0 || row >= rows || col >= cols) return false;
         return true;
     }
 
